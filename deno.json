@@ -15,6 +15,7 @@
   "imports": {
     "$fresh/": "https://deno.land/x/fresh@1.7.3/",
     "@es-toolkit/es-toolkit": "jsr:@es-toolkit/es-toolkit@^1.33.0",
+    "@jackfiszr/faker": "jsr:@jackfiszr/faker@^1.1.6",
     "kvdex": "jsr:@olli/kvdex@^3.2.0",
     "preact": "https://esm.sh/preact@10.22.0",
     "preact/": "https://esm.sh/preact@10.22.0/",

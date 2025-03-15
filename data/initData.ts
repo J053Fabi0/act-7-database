@@ -1,5 +1,6 @@
 import db from "./database.ts";
-import { shuffle, random } from "@es-toolkit/es-toolkit";
+import { faker } from "@jackfiszr/faker";
+import { sample } from "@es-toolkit/es-toolkit";
 
 // Init roles
 if ((await db.roles.count()) === 0)
@@ -11,37 +12,52 @@ if ((await db.groups.count()) === 0)
 
 // Init users
 if ((await db.users.count()) === 0) {
-  const groups = (await db.groups.getMany()).result;
   const roles = (await db.roles.getMany()).result;
+  const groups = (await db.groups.getMany()).result;
 
-  for (let i = 0; i < 50; i++)
-    await db.users.add({
-      name: `User ${(i + 1).toString().padStart(4, "0")}`,
-      roleId: roles[i % roles.length].id.toString(),
-      groupId: groups[i % groups.length].id.toString(),
-    });
+  await db.users.add({
+    name: "Admon",
+    password: "Adm@2022",
+    email: "admon@robotics.com",
+    roleId: roles.find((r) => r.value.name === "administrative")?.id ?? null,
+    groupId: null,
+  });
+
+  await db.users.add({
+    name: "Tecmilenio",
+    password: "Adm@2022",
+    email: "tecmilenio@robotics.com",
+    roleId: roles.find((r) => r.value.name === "teacher")?.id ?? null,
+    groupId: null,
+  });
+
+  await db.users.add({
+    name: "Student",
+    password: "Adm@2022",
+    email: "student@robotics.com",
+    roleId: roles.find((r) => r.value.name === "student")?.id ?? null,
+    groupId: sample(groups).id,
+  });
 }
 
 // Init Didactic material
-if ((await db.didacticMaterials.count()) === 0)
-  for (let i = 0; i < 50; i++)
-    await db.didacticMaterials.add({ file: `File ${(i + 1).toString().padStart(4, "0")}` });
+if ((await db.didacticMaterials.count()) === 0) {
+  await db.didacticMaterials.add({ file: "StarterKit" });
+  await db.didacticMaterials.add({ file: "Educational Robotics Kit" });
+  await db.didacticMaterials.add({ file: "Kit5" });
+}
 
 // Init courses
 if ((await db.courses.count()) === 0) {
-  const didacticMaterials = (await db.didacticMaterials.getMany()).result;
   const groups = (await db.groups.getMany()).result;
+  const didacticMaterials = (await db.didacticMaterials.getMany()).result;
 
-  for (let i = 0; i < 10; i++)
+  for (let i = 0; i < 100; i++)
     await db.courses.add({
-      title: `Course ${(i + 1).toString().padStart(4, "0")}`,
-      cover: "Cover",
-      content: "Content",
-      didacticMaterialsIds: shuffle(didacticMaterials)
-        .slice(0, random(Math.min(didacticMaterials.length, 10)))
-        .map((d) => d.id.toString()),
-      groupsIds: shuffle(groups)
-        .slice(0, 2)
-        .map((d) => d.id.toString()),
+      title: faker.fake("{{commerce.productName}}"),
+      cover: faker.fake("{{company.catchPhrase}}"),
+      content: faker.lorem.paragraph(),
+      didacticMaterialsIds: [sample(didacticMaterials).id],
+      groupsIds: [sample(groups).id],
     });
 }
