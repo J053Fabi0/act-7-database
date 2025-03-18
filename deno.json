@@ -3,12 +3,13 @@
   "lock": false,
   "tasks": {
     "check": "deno check **/*.ts",
-    "start": "deno run -A --watch server/index.ts",
+    "server": "deno run -A --watch server/index.ts",
     "client": "deno run -A --watch client/index.ts"
   },
   "lint": { "rules": { "tags": ["fresh", "recommended"] } },
   "exclude": ["**/_fresh/*"],
   "imports": {
+    "@es-toolkit/es-toolkit": "jsr:@es-toolkit/es-toolkit@^1.33.0",
     "@jackfiszr/faker": "jsr:@jackfiszr/faker@^1.1.6",
     "@std/path": "jsr:@std/path@^1.0.8",
     "@trpc/client": "npm:@trpc/client@^11.0.0-rc.833",

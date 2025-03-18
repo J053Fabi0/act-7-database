@@ -22,42 +22,62 @@ const trpc = createTRPCClient<AppRouter>({
 });
 
 // Read
+const users = (await trpc.users.list.query()).result;
+const subjects = (await trpc.subjects.list.query()).result;
+
+console.log("Subjects:", subjects.length);
+console.log("Users:", users.length);
+
 {
-  const superheros = await trpc.superhero.list.query();
-  console.log("Superheros:", superheros.result.length);
+  console.group("Activities");
+  console.group("By subject");
+  for (const subject of subjects) {
+    const activities = (await trpc.activities.listBySubjectId.query(subject.id.toString())).result;
+    console.log(`${subject.value.name} : ${activities.length}`);
+  }
+  console.groupEnd();
+  console.group("By user");
+  for (const user of users) {
+    const activities = (await trpc.activities.listByUserId.query(user.id.toString())).result;
+    console.log(`${user.value.name} : ${activities.length}`);
+  }
+  console.groupEnd();
+  console.groupEnd();
 }
 
 // Create
+const newUser = await trpc.users.create.mutate({ name: "New user" });
+if (newUser.ok === false) throw new Error("Cannot create new user");
+console.log("New user", newUser.id);
 
-const createdSuperhero = await trpc.superhero.create.mutate({
-  name: "Denosaur",
-  email: "dino@dino.com",
-  mainColor: "Green",
-  photoURL: "https://photo.com",
-  realName: "Felix Guzmán",
+const newSubject = await trpc.subjects.create.mutate({ name: "New subject" });
+if (newSubject.ok === false) throw new Error("Cannot create new subject");
+console.log("New subject", newSubject.id);
+
+const newActivity = await trpc.activities.create.mutate({
+  grade: 100,
+  type: "math",
+  date: Date.now(),
+  name: "New grade",
+  userId: newUser.id,
+  subjectId: newSubject.id,
 });
-console.log("Created superhero:", createdSuperhero.ok);
+if (newActivity.ok === false) throw new Error("Cannot create new user");
+console.log("New activity", newActivity.id);
 
-if (createdSuperhero.ok === false) throw new Error("Cannot create superhero");
+// Modify
+const userModified = await trpc.users.editName.mutate({ id: newUser.id, name: "Hello" });
+console.log("User modified:", userModified?.value.name);
 
-// Read
-{
-  const superhero = await trpc.superhero.byName.query("Denosaur");
-  console.log("Superhero:", superhero.result.at(0)?.value.name);
-}
+const subjectModified = await trpc.subjects.editName.mutate({ id: newSubject.id, name: "Changed" });
+console.log("Subject modified:", subjectModified?.value.name);
 
-// Edit
-{
-  const superhero = await trpc.superhero.editName.mutate({
-    id: createdSuperhero.id,
-    name: "New name",
-  });
-
-  console.log("Name changed:", superhero?.value.name);
-}
+const activityModified = await trpc.activities.edit.mutate({
+  id: newActivity.id,
+  newValues: { grade: 50 },
+});
+console.log("Activity modified:", activityModified?.value.grade);
 
 // Delete
-{
-  const deleted = await trpc.superhero.delete.mutate(createdSuperhero.id);
-  console.log(deleted);
-}
+const deletedActivity = await trpc.activities.delete.mutate(newActivity.id);
+console.log("Deleted activity:", deletedActivity);

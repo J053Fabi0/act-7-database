@@ -1,14 +1,17 @@
-import Superhero from "./models/Suerhero.ts";
+import User from "./models/User.ts";
 import { collection, kvdex } from "kvdex";
+import SubjectModel from "./models/Subject.ts";
+import ActivityModel from "./models/Activity.ts";
 
 const kv = await Deno.openKv();
 
 export const schema = {
-  superhero: collection(Superhero, {
+  users: collection(User),
+  subjects: collection(SubjectModel),
+  activities: collection(ActivityModel, {
     indices: {
-      email: "primary",
-      realName: "secondary",
-      name: "secondary",
+      subjectId: "secondary",
+      userId: "secondary",
     },
   }),
 };
