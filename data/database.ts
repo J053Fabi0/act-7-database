@@ -1,17 +1,14 @@
-import User from "./models/User.ts";
-import { collection, kvdex } from "kvdex";
-import SubjectModel from "./models/Subject.ts";
-import ActivityModel from "./models/Activity.ts";
+import Photo from "./models/Photo.ts";
+import { collection, kvdex } from "@olli/kvdex";
+import { openKvToolbox } from "@kitsonk/kv-toolbox";
 
-const kv = await Deno.openKv();
+const kv = await Deno.openKv("./data/db.sqlite3");
+export const kvToolbox = await openKvToolbox({ path: "./data/db.sqlite3" });
 
 export const schema = {
-  users: collection(User),
-  subjects: collection(SubjectModel),
-  activities: collection(ActivityModel, {
+  photos: collection(Photo, {
     indices: {
-      subjectId: "secondary",
-      userId: "secondary",
+      name: "primary",
     },
   }),
 };

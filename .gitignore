@@ -9,4 +9,6 @@
 _fresh/
 # npm dependencies
 node_modules/
-allData.json
+data/db.sqlite3
+data/db.sqlite3-shm
+data/db.sqlite3-wal
