@@ -2,8 +2,8 @@ import Photo from "./models/Photo.ts";
 import { collection, kvdex } from "@olli/kvdex";
 import { openKvToolbox } from "@kitsonk/kv-toolbox";
 
-const kv = await Deno.openKv("./data/db.sqlite3");
-export const kvToolbox = await openKvToolbox({ path: "./data/db.sqlite3" });
+const kv = await Deno.openKv();
+export const kvToolbox = await openKvToolbox();
 
 export const schema = {
   photos: collection(Photo, {
