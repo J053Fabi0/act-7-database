@@ -5,7 +5,7 @@ import db, { kvToolbox } from "../../data/database.ts";
 export const handler: Handlers = {
   async GET(req, ctx) {
     const { pathname } = new URL(req.url);
-    const filename = parse(pathname).base;
+    const filename = decodeURIComponent(parse(pathname).base);
 
     const photoRecordId = await db.photos.findByPrimaryIndex("name", filename);
     if (photoRecordId === null) return ctx.renderNotFound();
