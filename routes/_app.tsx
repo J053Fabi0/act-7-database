@@ -1,5 +1,7 @@
+import Navbar from "../components/Navbar.tsx";
 import { type PageProps } from "$fresh/server.ts";
-export default function App({ Component }: PageProps) {
+
+export default function App({ Component, route }: PageProps) {
   return (
     <html>
       <head>
@@ -8,8 +10,18 @@ export default function App({ Component }: PageProps) {
         <title>act11</title>
         <link rel="stylesheet" href="/styles.css" />
       </head>
-      <body>
-        <Component />
+      <body class="min-h-screen flex flex-col">
+        <Navbar route={route} />
+
+        <div class="px-4 pt-4 mx-auto w-full max-w-screen-lg flex-1">
+          <Component />
+        </div>
+
+        <div class="mt-6 py-5 bg-gray-300 text-black">
+          <div class="px-4 mx-auto w-full max-w-screen-lg flex justify-center items-center gap-2">
+            Footer
+          </div>
+        </div>
       </body>
     </html>
   );
